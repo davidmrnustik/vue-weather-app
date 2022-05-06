@@ -30,8 +30,7 @@ import { mapState, mapWritableState } from 'pinia/dist/pinia'
 export default {
   data() {
     return {
-      search: '8368U',
-      weatherData: []
+      search: '8368U'
     }
   },
   components: {
@@ -44,15 +43,16 @@ export default {
       }
       this.setLoading(true)
       const aemetService = new AemetService()
-      this.weatherData = await aemetService
+      return aemetService
         .getWeatherForStation(this.search)
-        .catch(err => console.log(err))
+        .then(this.setWeatherData)
+        .catch(console.log)
         .finally(() => this.setLoading(false))
     }
   },
   computed: {
     ...mapState(useAppStore, ['loading']),
-    ...mapWritableState(useAppStore, ['setLoading'])
+    ...mapWritableState(useAppStore, ['setLoading', 'setWeatherData'])
   }
 }
 </script>

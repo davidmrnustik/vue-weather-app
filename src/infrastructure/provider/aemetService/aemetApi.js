@@ -1,6 +1,6 @@
 import HttpService from '../httpService'
 
-const URL = 'https://opendata.aemet.es/opendata/api'
+const URL = import.meta.env.VITE_AEMET_BASE_URL || 'http://localhost:3000'
 const httpService = new HttpService()
 
 const getHeaders = api => {
@@ -16,7 +16,7 @@ const getHeaders = api => {
 }
 
 export default {
-  getDataAndMetadata(apiKey, idema) {
+  getStationDataForLast24hours(apiKey, idema) {
     const options = {
       method: 'GET',
       headers: getHeaders(apiKey)

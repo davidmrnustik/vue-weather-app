@@ -14,17 +14,19 @@ export default class AemetService {
     return import.meta.env.VITE_API_KEY || ''
   }
 
+  async #getDataAndMetadata({ data, metadata } = {}) {
+    return Promise.all([
+      this.httpService.get(data),
+      this.httpService.get(metadata)
+    ])
+  }
+
   getWeatherForStation(idema) {
     const apiKey = this.#getApiKey()
-    return aemetApi
-      .getDataAndMetadata(apiKey, idema)
+    return this.apiService
+      .getStationDataForLast24hours(apiKey, idema)
       .then(res => new AemetResponse(res))
-      .then(({ data: dataUrl, metadata: metadataUrl } = {}) =>
-        Promise.all([
-          this.httpService.get(dataUrl),
-          this.httpService.get(metadataUrl)
-        ])
-      )
+      .then(this.#getDataAndMetadata.bind(this))
       .then(([data, metadata]) => {
         return {
           data: [...data.map(station => new WeatherStation(station))],
